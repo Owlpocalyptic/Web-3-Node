@@ -10,7 +10,7 @@ router.post('/', function(req, res, next) {
   res.render('index', { title: 'POSTED Express' });
 });
 
-router.get('/notindex', function(req, rest, next) {
+router.get('/notindex', function(req, res, next) {
   res.render('notindex', { title: 'POSTED Express' });
 });
 
