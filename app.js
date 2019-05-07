@@ -38,4 +38,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+app.use(express.static('public'));
+
 module.exports = app;

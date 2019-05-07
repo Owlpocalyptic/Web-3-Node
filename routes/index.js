@@ -1,7 +1,5 @@
 var express = require('express');
-const app = express();
 var router = express.Router();
-app.use(express.static('public'));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
