@@ -1,17 +1,9 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const indexController = require('../controllers/index');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
-router.post('/', function(req, res, next) {
-  res.render('index', { title: 'POSTED Express' });
-});
-
-router.get('/notindex', function(req, res, next) {
-  res.render('notindex', { title: 'POSTED Express' });
-});
+router.get('/', indexController.index);
+router.post('/', indexController.post);
+router.get('/notIndex', indexController.notindex);
 
 module.exports = router;
