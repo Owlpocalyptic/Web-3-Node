@@ -1,6 +1,6 @@
 module.exports = {
     index(req, res){
-        res.status(200).render('index', { title: 'Express' });
+        res.status(200).render('index', { title: 'About Countries' });
     },
     post(req, res){
         return res.status(201).render('index', { title: 'POSTED Express' });
