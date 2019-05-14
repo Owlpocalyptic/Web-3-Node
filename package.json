@@ -6,6 +6,8 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "^4.16.4",
@@ -26,5 +28,6 @@
     "url": "https://github.com/Owlpocalyptic/Web-3-Node/issues"
   },
   "homepage": "https://github.com/Owlpocalyptic/Web-3-Node#readme",
+  "keywords": [],
   "description": ""
 }
