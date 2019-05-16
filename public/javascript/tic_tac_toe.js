@@ -123,6 +123,7 @@ var Game = function (_React$Component2) {
             var history = this.state.history;
             var current = history[this.state.stepNumber];
             var winner = calculateWinner(current.squares);
+            var over = this.state.stepNumber == 9 ? true : false;
 
             var moves = history.map(function (step, move) {
                 var desc = move ? 'Go to move #' + move : 'Go to game start';
@@ -142,6 +143,8 @@ var Game = function (_React$Component2) {
             var status = void 0;
             if (winner) {
                 status = 'Winner: ' + winner;
+            } else if (over) {
+                status = 'It\'s a tie!';
             } else {
                 status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
             }
@@ -168,7 +171,7 @@ var Game = function (_React$Component2) {
                         status
                     ),
                     React.createElement(
-                        "ol",
+                        "ul",
                         null,
                         moves
                     )
