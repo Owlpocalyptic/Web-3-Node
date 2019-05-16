@@ -79,6 +79,7 @@ function Square(props) {
         const history = this.state.history;
         const current = history[this.state.stepNumber];     
         const winner = calculateWinner(current.squares);
+        const over = (this.state.stepNumber == 9) ? true : false;
 
         const moves = history.map((step, move) => {
             const desc = move ?
@@ -94,6 +95,8 @@ function Square(props) {
         let status;
         if (winner) {
             status = 'Winner: ' + winner;
+        } else if (over) {
+            status = 'It\'s a tie!';
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
@@ -108,7 +111,7 @@ function Square(props) {
             </div>
             <div className="game-info">
                 <div>{status}</div>
-                <ol>{moves}</ol>
+                <ul>{moves}</ul>
             </div>
             </div>
         );
