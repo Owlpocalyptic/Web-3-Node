@@ -1,6 +1,6 @@
 let values;
 console.log("Cache.js is running");
-if (localStorage.getItem('countries'))
+if (localStorage.getItem('countries') === null)
 {
     console.log("Local Storage: " + localStorage.getItem('countries'));
     values = localStorage.getItem('countries');
