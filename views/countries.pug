@@ -1,0 +1,9 @@
+extends layout
+
+block content
+    h1= title
+    label(for='country-select') Countries
+    select(id='country-select' name='countries')
+    
+    script(src='https://code.jquery.com/jquery-3.3.1.min.js')
+    script(src=cache.js)
