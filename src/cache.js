@@ -1,13 +1,6 @@
 let values;
 console.log("Cache.js is running");
 
-$.ajaxSetup({
-    type: "GET",
-    data: {},
-    dataType: 'json',
-    crossDomain: true,
-    contentType: 'application/json; charset=utf-8'
-});
 
 if (localStorage.getItem('countries') === null)
 {
