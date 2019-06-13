@@ -11,7 +11,7 @@ $.ajaxSetup({
 
 if (localStorage.getItem('countries') === null)
 {
-    $.get("10.25.137.196:80/api/test", (response) => {
+    $.get("10.25.137.137:80/api/countries", (response) => {
         console.log("Response: " + response);
         localStorage.setItem('countries', 'response');
     });
