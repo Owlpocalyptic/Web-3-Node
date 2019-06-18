@@ -70,4 +70,8 @@ ul {
   list-style: none;
 }
 
+select {
+  margin-left: 20px;
+}
+
 /*# sourceMappingURL=default.css.map */

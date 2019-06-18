@@ -7,7 +7,6 @@
     "deploy": "sass sass:public/stylesheets & npx babel src --out-dir public/javascript --presets react-app/prod & node ./bin/www"
   },
   "dependencies": {
-    "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^3.1.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -18,7 +17,9 @@
     "sass": "^1.20.1"
   },
   "main": "app.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Owlpocalyptic/Web-3-Node.git"
