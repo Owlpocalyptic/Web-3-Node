@@ -9,12 +9,18 @@ var loadList = function loadList(items) {
     var selectbox = $("#country-select");
     for (var i = 0; i < itemsJSON.length; i++) {
         var country = itemsJSON[i]["name"];
-        selectbox.append("<option value='" + country + "'>" + country + "</option>");
-        console.log(itemsJSON[i]["name"]);
+        selectbox.append("<option value='" + i + "'>" + country + "</option>");
     }
-    selectbox.addEventListener("change", function (event) {
+    selectbox.change(function (event) {
+        var itemJSON = itemsJSON[event.target.value];
         var infotitle = $("#title");
-        infotitle.append("SELECTED");
+        var infoPopulation = $("#population");
+        infotitle.text(itemJSON["name"]);
+        infoPopulation.text(function () {
+            var popData = itemJSON["data"]["population"]["2005"];
+            var popString = itemJSON["data"]["population"] !== undefined ? popData : "N/A";
+            return "Population: " + popString;
+        });
     });
 };
 
@@ -22,18 +28,14 @@ if (localStorage.getItem('countries') === null) {
     console.log("Well, the checking part worked.");
     $.get("http://10.25.137.137:80/api/countries", function (response) {
         responseJSON = JSON.parse(response);
-        console.log("Response: " + responseJSON);
-        //localStorage.setItem('countries', JSON.stringify(responseJSON));
-        values = responseJSON;
-        return values;
+        localStorage.setItem('countries', JSON.stringify(responseJSON));
+        return responseJSON;
         //console.log(JSON.stringify(values));
     }).then(function (values) {
         loadList(values);
     });
 } else {
     values = localStorage.getItem('countries');
-    console.log("Local Storage: " + values);
     valuesString = JSON.stringify(values);
-    console.log(JSON.parse(valuesString));
     loadList(JSON.parse(valuesString));
 }

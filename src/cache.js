@@ -8,12 +8,18 @@ const loadList = (items) => {
     for (let i=0;i< itemsJSON.length;i++)
     {
         let country = itemsJSON[i]["name"];
-        selectbox.append("<option value='" + country + "'>" + country + "</option>");
-        console.log(itemsJSON[i]["name"]);
+        selectbox.append("<option value='" + i + "'>" + country + "</option>");
     }
-    selectbox.addEventListener("change", (event) => {
+    selectbox.change((event) => {
+        const itemJSON = itemsJSON[event.target.value];
         let infotitle = $("#title");
-        infotitle.append("SELECTED");
+        let infoPopulation=$("#population")
+        infotitle.text(itemJSON["name"]);
+        infoPopulation.text(() => {
+            const popData = itemJSON["data"]["population"]["2005"]
+            const popString = (itemJSON["data"]["population"] !== undefined) ? popData : "N/A";
+            return "Population: " + popString;
+        });
     });
 }
 
@@ -23,10 +29,8 @@ if (localStorage.getItem('countries') === null)
     console.log("Well, the checking part worked.")
     $.get("http://10.25.137.137:80/api/countries", (response) => {
         responseJSON = JSON.parse(response);
-        console.log("Response: " + responseJSON);
-        //localStorage.setItem('countries', JSON.stringify(responseJSON));
-        values = responseJSON;
-        return values;
+        localStorage.setItem('countries', JSON.stringify(responseJSON));
+        return responseJSON;
         //console.log(JSON.stringify(values));
     }).then((values) => {
         loadList(values);
@@ -35,8 +39,6 @@ if (localStorage.getItem('countries') === null)
 else
 {
     values = localStorage.getItem('countries');
-    console.log("Local Storage: " + values);
     valuesString = JSON.stringify(values);
-    console.log(JSON.parse(valuesString));
     loadList(JSON.parse(valuesString));
 }
