@@ -23,7 +23,7 @@ const loadList = (items) => {
 if (localStorage.getItem('countries') === null)
 {
     console.log("Well, the checking part worked.")
-    $.get("http://10.25.137.137:80/api/countries", (response) => {
+    $.get("/api/countries", (response) => {
         responseJSON = JSON.parse(response);
         localStorage.setItem('countries', JSON.stringify(responseJSON));
         return responseJSON;
