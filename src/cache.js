@@ -55,12 +55,7 @@ function changeInfoBox() {
         return responseJSON;
     }).then((updatedJSON) => {
         let itemJSON = updatedJSON;
-        console.log(itemJSON);
-        keys = Object.keys(itemJSON);
-        for (k in keys)
-        {
-            console.log(k + ": " + keys[k]);
-        }
+        console.log(itemJSON[0]);
     
         const year = $("#year-select").children("option:selected").val();
         const infobox = $("#infobox");
