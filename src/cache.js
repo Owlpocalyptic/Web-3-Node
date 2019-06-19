@@ -27,7 +27,6 @@ if (localStorage.getItem('countries') === null)
         responseJSON = JSON.parse(response);
         localStorage.setItem('countries', JSON.stringify(responseJSON));
         return responseJSON;
-        //console.log(JSON.stringify(values));
     }).then((values) => {
         loadList(values);
     });
@@ -50,7 +49,6 @@ yearbox.change(() => {
 
 function changeInfoBox() {
     const itemJSON = itemsJSON[$("#country-select").children("option:selected").val()];
-    console.log(itemJSON);
     const year = $("#year-select").children("option:selected").val();
     const infobox = $("#infobox");
     if (itemJSON["name"] != "")
@@ -83,7 +81,6 @@ function changeInfoBox() {
 
 function getFromJSON(field, year, itemJSON, extra = "", prefix = "", suffix = "") {
     const rawData = (itemJSON["data"][field] !== undefined) ? itemJSON["data"][field][year] : undefined;
-    console.log(rawData);
     const numString = (rawData !== undefined && rawData != 0) ? prefix + formatNumbers(rawData) + suffix : "N/A";
     extra = (extra != "") ? " " + extra : "";
     return capitalize(field) + extra + ": " + numString;
