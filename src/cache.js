@@ -49,41 +49,42 @@ yearbox.change(() => {
 });
 
 function changeInfoBox() {
-    const itemJSON = itemsJSON[$("#country-select").children("option:selected").val()];
-    $.get(base_url + itemJSON["name"], (response) => {
+    const itemJSONname = itemsJSON[$("#country-select").children("option:selected").val()]["name"];
+    $.get(base_url + itemJSONname, (response) => {
         responseJSON = JSON.parse(response);
         return responseJSON;
     }).then((updatedJSON) => {
-        itemJSON = updatedJSON;
-    })
-    const year = $("#year-select").children("option:selected").val();
-    const infobox = $("#infobox");
-    if (itemJSON["name"] != "")
-    {
-        infobox.removeClass("hidden");
-        let infotitle = $("#title");
-        let titletext = itemJSON["name"] + ", " + year;
-        infotitle.text(titletext);
+        const itemJSON = updatedJSON;
+    
+        const year = $("#year-select").children("option:selected").val();
+        const infobox = $("#infobox");
+        if (itemJSON["name"] != "")
+        {
+            infobox.removeClass("hidden");
+            let infotitle = $("#title");
+            let titletext = itemJSON["name"] + ", " + year;
+            infotitle.text(titletext);
 
-        let infoPopulation=$("#population");
-        let infoEmployment=$("#employment-rate");
-        let infoSpending=$("#spending");
-        let infoAlcohol=$("#alcohol-consumption");
-        let infoInternet=$("#internet-access");
+            let infoPopulation=$("#population");
+            let infoEmployment=$("#employment-rate");
+            let infoSpending=$("#spending");
+            let infoAlcohol=$("#alcohol-consumption");
+            let infoInternet=$("#internet-access");
 
-        infoPopulation.text(getFromJSON("population", year, itemJSON));
-        let suffix = (getFromJSON("employment", year, itemJSON) === "N/A") ? "" : "%";
-        infoEmployment.text(getFromJSON("employment", year, itemJSON, "Rate", "", suffix));
-        let prefix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : "$";
-        infoSpending.text("Government Health " + getFromJSON("spending", year, itemJSON, "Per Capita", prefix));
-        suffix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : " litres";
-        infoAlcohol.text(getFromJSON("alcohol", year, itemJSON, "Consumption Per Adult", "", suffix));
-        infoInternet.text("Population With " + getFromJSON("internet", year, itemJSON, "Access"));
-    }
-    else
-    {
-        infobox.addClass("hidden");
-    }
+            infoPopulation.text(getFromJSON("population", year, itemJSON));
+            let suffix = (getFromJSON("employment", year, itemJSON) === "N/A") ? "" : "%";
+            infoEmployment.text(getFromJSON("employment", year, itemJSON, "Rate", "", suffix));
+            let prefix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : "$";
+            infoSpending.text("Government Health " + getFromJSON("spending", year, itemJSON, "Per Capita", prefix));
+            suffix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : " litres";
+            infoAlcohol.text(getFromJSON("alcohol", year, itemJSON, "Consumption Per Adult", "", suffix));
+            infoInternet.text("Population With " + getFromJSON("internet", year, itemJSON, "Access"));
+        }
+        else
+        {
+            infobox.addClass("hidden");
+        }
+    });
 };
 
 function getFromJSON(field, year, itemJSON, extra = "", prefix = "", suffix = "") {
