@@ -1,4 +1,5 @@
 let values;
+const base_url = "http://10.25.137.137:80/api/countries/";
 console.log("Cache.js is running");
 
 const loadList = (items) => {
@@ -23,7 +24,7 @@ const loadList = (items) => {
 if (localStorage.getItem('countries') === null)
 {
     console.log("Well, the checking part worked.")
-    $.get("http://10.25.137.137:80/api/countries", (response) => {
+    $.get(base_url, (response) => {
         responseJSON = JSON.parse(response);
         localStorage.setItem('countries', JSON.stringify(responseJSON));
         return responseJSON;
@@ -49,6 +50,12 @@ yearbox.change(() => {
 
 function changeInfoBox() {
     const itemJSON = itemsJSON[$("#country-select").children("option:selected").val()];
+    $.get(base_url + itemJSON["name"], (response) => {
+        responseJSON = JSON.parse(response);
+        return responseJSON;
+    }).then((updatedJSON) => {
+        itemJSON = updatedJSON;
+    })
     const year = $("#year-select").children("option:selected").val();
     const infobox = $("#infobox");
     if (itemJSON["name"] != "")
