@@ -5,29 +5,18 @@ console.log("Cache.js is running");
 
 var loadList = function loadList(items) {
     itemsJSON = JSON.parse(items);
+    itemsJSON.sort(function (a, b) {
+        var x = a.name;var y = b.name;
+        return x < y ? -1 : x > y ? 1 : 0;
+    });
     console.log(typeof itemsJSON === "undefined" ? "undefined" : _typeof(itemsJSON));
     var selectbox = $("#country-select");
     for (var i = 0; i < itemsJSON.length; i++) {
         var country = itemsJSON[i]["name"];
         selectbox.append("<option value='" + i + "'>" + country + "</option>");
     }
-    selectbox.change(function (event) {
-        var itemJSON = itemsJSON[event.target.value];
-        var year = "2005";
-        var infotitle = $("#title");
-        var infoPopulation = $("#population");
-        var infoEmployment = $("#employment-rate");
-        var infoSpending = $("#spending");
-        var infoAlcohol = $("#alcohol-consumption");
-        var infoInternet = $("#internet-access");
-        infotitle.text(itemJSON["name"]);
-        infoPopulation.text(getFromJSON("population", year, itemJSON));
-        var suffix = getFromJSON("employment", year, itemJSON) === "N/A" ? "" : "%";
-        infoEmployment.text(getFromJSON("employment", year, itemJSON, "Rate", "", suffix));
-        var prefix = getFromJSON("spending", year, itemJSON) === "N/A" ? "" : "$";
-        infoSpending.text(getFromJSON("spending", year, itemJSON, "Per Capita", prefix));
-        infoAlcohol.text(getFromJSON("alcohol", year, itemJSON, "Consumption"));
-        infoInternet.text(getFromJSON("internet", year, itemJSON, "Access"));
+    selectbox.change(function () {
+        changeInfoBox();
     });
 };
 
@@ -47,7 +36,45 @@ if (localStorage.getItem('countries') === null) {
     loadList(JSON.parse(valuesString));
 }
 
-var getFromJSON = function getFromJSON(field, year, itemJSON) {
+var yearbox = $("#year-select");
+for (var y = 1998; y <= 2008; y++) {
+    yearbox.append("<option value='" + y + "'>" + y + "</option>");
+}
+yearbox.change(function () {
+    changeInfoBox();
+});
+
+function changeInfoBox() {
+    var itemJSON = itemsJSON[$("#country-select").children("option:selected").val()];
+    console.log(itemJSON);
+    var year = $("#year-select").children("option:selected").val();
+    var infobox = $("#infobox");
+    if (itemJSON["name"] != "") {
+        infobox.removeClass("hidden");
+        var infotitle = $("#title");
+        var titletext = itemJSON["name"] + ", " + year;
+        infotitle.text(titletext);
+
+        var infoPopulation = $("#population");
+        var infoEmployment = $("#employment-rate");
+        var infoSpending = $("#spending");
+        var infoAlcohol = $("#alcohol-consumption");
+        var infoInternet = $("#internet-access");
+
+        infoPopulation.text(getFromJSON("population", year, itemJSON));
+        var suffix = getFromJSON("employment", year, itemJSON) === "N/A" ? "" : "%";
+        infoEmployment.text(getFromJSON("employment", year, itemJSON, "Rate", "", suffix));
+        var prefix = getFromJSON("spending", year, itemJSON) === "N/A" ? "" : "$";
+        infoSpending.text("Government " + getFromJSON("spending", year, itemJSON, "Per Capita", prefix));
+        suffix = getFromJSON("spending", year, itemJSON) === "N/A" ? "" : " litres";
+        infoAlcohol.text(getFromJSON("alcohol", year, itemJSON, "Consumption Per Adult", "", suffix));
+        infoInternet.text("Population With " + getFromJSON("internet", year, itemJSON, "Access"));
+    } else {
+        infobox.addClass("hidden");
+    }
+};
+
+function getFromJSON(field, year, itemJSON) {
     var extra = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "";
     var prefix = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : "";
     var suffix = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : "";
@@ -79,7 +106,7 @@ var formatNumbers = function formatNumbers(amount) {
     }
 };
 
-var capitalize = function capitalize(s) {
+function capitalize(s) {
     if (typeof s !== 'string') return '';
     n = s.replace("_", " ");
     n = n.replace("id", "ID");

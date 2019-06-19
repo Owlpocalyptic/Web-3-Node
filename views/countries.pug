@@ -2,15 +2,24 @@ extends layout
 
 block content
     h1= title
-    label(for='country-select') Countries
-    select(id='country-select' name='countries')
+    table
+        tr
+            td
+                label(for='country-select') Country
+            td
+                select(id='country-select' name='countries')
+        tr
+            td
+                label(for='year-select') Year
+            td
+                select(id='year-select' name='years')
     #infobox
         h2(id='title')
         #population
+        #internet-access
         #employment-rate
         #spending
         #alcohol-consumption
-        #internet-access
     
     script(src='https://code.jquery.com/jquery-3.3.1.min.js')
     script(src='/javascript/cache.js')
