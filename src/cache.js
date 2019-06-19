@@ -68,7 +68,7 @@ function changeInfoBox() {
         let suffix = (getFromJSON("employment", year, itemJSON) === "N/A") ? "" : "%";
         infoEmployment.text(getFromJSON("employment", year, itemJSON, "Rate", "", suffix));
         let prefix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : "$";
-        infoSpending.text("Government " + getFromJSON("spending", year, itemJSON, "Per Capita", prefix));
+        infoSpending.text("Government Health " + getFromJSON("spending", year, itemJSON, "Per Capita", prefix));
         suffix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : " litres";
         infoAlcohol.text(getFromJSON("alcohol", year, itemJSON, "Consumption Per Adult", "", suffix));
         infoInternet.text("Population With " + getFromJSON("internet", year, itemJSON, "Access"));

@@ -26,7 +26,6 @@ if (localStorage.getItem('countries') === null) {
         responseJSON = JSON.parse(response);
         localStorage.setItem('countries', JSON.stringify(responseJSON));
         return responseJSON;
-        //console.log(JSON.stringify(values));
     }).then(function (values) {
         loadList(values);
     });
@@ -46,7 +45,6 @@ yearbox.change(function () {
 
 function changeInfoBox() {
     var itemJSON = itemsJSON[$("#country-select").children("option:selected").val()];
-    console.log(itemJSON);
     var year = $("#year-select").children("option:selected").val();
     var infobox = $("#infobox");
     if (itemJSON["name"] != "") {
@@ -80,7 +78,6 @@ function getFromJSON(field, year, itemJSON) {
     var suffix = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : "";
 
     var rawData = itemJSON["data"][field] !== undefined ? itemJSON["data"][field][year] : undefined;
-    console.log(rawData);
     var numString = rawData !== undefined && rawData != 0 ? prefix + formatNumbers(rawData) + suffix : "N/A";
     extra = extra != "" ? " " + extra : "";
     return capitalize(field) + extra + ": " + numString;
