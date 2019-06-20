@@ -1,6 +1,94 @@
+'use strict';
+
+import { react } from "babel-types";
+
 let values;
 const base_url = "http://10.25.137.137:80/api/countries";
 console.log("Cache.js is running");
+
+
+class CountryList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            countries: null
+        }
+    }
+
+    addCountries(i) {
+        this.state.countries = JSON.parse(i);
+        countries.sort(function(a, b) {
+            var x = a.name; var y = b.name;
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+
+    }
+
+    render() {
+        const listCountries = countries.map((country) => {
+            return (
+                <option value={country}>{country}</option>
+            );
+        });
+
+        const listYears = () => {
+            let listString = "";
+            for (let y = 1998; y <= 2008; y++)
+            {
+                listString += "<option value='" + y + "'>" + y + "</option>";
+            }
+            return listString;
+        }
+
+        return (
+            <table>
+                <tr>
+                    <td>
+                        <label for="country-select">Country</label>
+                    </td>
+                    <td>
+                        <select id="country-select" name="countries">{listCountries}</select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="year-select">Year</label>
+                    </td>
+                    <td>
+                        <select id="year-select" name="years">{listYears}</select>
+                    </td>
+                </tr>
+            </table>
+        );
+    }
+}
+
+ReactDOM.render(
+    <CountryList />,
+    document.getElementById('root')
+  );
+
+
+class InfoBox extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { country: null };
+    }
+
+    render() {
+        if (!this.state.country)
+        {
+            return '';
+        }
+
+        return 
+    }
+}
+
+
+
+
+// ==============================
 
 const loadList = (items) => {
     itemsJSON = JSON.parse(items);
