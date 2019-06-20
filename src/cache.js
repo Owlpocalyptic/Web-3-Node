@@ -1,5 +1,5 @@
 let values;
-const base_url = "http://10.25.137.137:80/api/countries/";
+const base_url = "http://10.25.137.137:80/api/countries";
 console.log("Cache.js is running");
 
 const loadList = (items) => {
@@ -54,7 +54,7 @@ function changeInfoBox() {
     if (itemJSONname != "")
     {
         infobox.removeClass("hidden");
-        $.get(base_url + itemJSONname, (response) => {
+        $.get(base_url + "/" + itemJSONname, (response) => {
             responseJSON = JSON.parse(response);
             return responseJSON;
         }).then((updatedJSON) => {
