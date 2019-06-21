@@ -38,9 +38,13 @@ var CountryList = function (_React$Component) {
                 console.log("Well, the checking part worked.");
                 $.get(base_url, function (response) {
                     var responseJSON = JSON.parse(response);
+                    var resultArray = $.map(responseJSON, function (value, index) {
+                        return [value];
+                    });
+                    resultArray.sort().reverse();
                     localStorage.setItem('countries', JSON.stringify(responseJSON));
                     return responseJSON;
-                }).then(function (values) {
+                }).done(function (values) {
                     _this2.state.countries = values;
                 });
             } else {
@@ -59,18 +63,23 @@ var CountryList = function (_React$Component) {
                 var name = country["name"];
                 return React.createElement(
                     "option",
-                    { value: name },
+                    { key: name, value: name },
                     name
                 );
             });
 
-            var listYears = function listYears() {
-                var listString = "";
-                for (var y = 1998; y <= 2008; y++) {
-                    listString += "<option key= '" + y + "' value='" + y + "'>" + y + "</option>";
-                }
-                return listString;
-            };
+            var yearArray = [];
+            for (var y = 1998; y <= 2008; y++) {
+                yearArray.push(y);
+            }
+
+            var listYears = yearArray.map(function (year) {
+                return React.createElement(
+                    "option",
+                    { key: year, value: year },
+                    year
+                );
+            });
 
             return React.createElement(
                 "table",
@@ -118,7 +127,7 @@ var CountryList = function (_React$Component) {
                             React.createElement(
                                 "select",
                                 { id: "year-select", ref: this.yearSelect, name: "years", onChange: this.props.onChangeYear },
-                                listYears()
+                                listYears
                             )
                         )
                     )
@@ -139,19 +148,24 @@ var InfoBox = function (_React$Component2) {
         var _this3 = _possibleConstructorReturn(this, (InfoBox.__proto__ || Object.getPrototypeOf(InfoBox)).call(this, props));
 
         _this3.state = {
+            countryData: null,
             country: null,
             population: null,
             employment: null,
             spending: null,
             alcohol: null,
             internet: null,
-            year: "1998"
+            year: "1998",
+            failed: false
         };
         _this3.handleChange = _this3.handleChange.bind(_this3);
         _this3.handleChangeYear = _this3.handleChangeYear.bind(_this3);
         _this3.cycleData = _this3.cycleData.bind(_this3);
         return _this3;
     }
+
+    // onChange handler for the Country-Select input. Makes an API request to the other app each time it's called.
+
 
     _createClass(InfoBox, [{
         key: "handleChange",
@@ -162,26 +176,42 @@ var InfoBox = function (_React$Component2) {
             var year = this.state.year;
             $.get(base_url + "/" + countryName, function (response) {
                 return JSON.parse(response);
-            }).then(function (updatedJSON) {
+            }).done(function (updatedJSON) {
                 var countryData = JSON.parse(updatedJSON);
-                _this4.cycleData(countryData, countryName, year);
+                _this4.cycleData(countryData, year, countryName);
+                _this4.setState({
+                    failed: false
+                });
+            }).fail(function () {
+                _this4.setState({
+                    failed: true
+                });
             });
         }
+
+        // onChange handler for the Year-Select input. Does not make an API request: the data is already in storage.
+
     }, {
         key: "handleChangeYear",
         value: function handleChangeYear(val) {
-            this.cycleData(this.state.countryData, this.state.countryName, val.target.value);
+            this.cycleData(this.state.countryData, val.target.value);
         }
+
+        // helper method that vastly reduces code duplication, since every single value except for country and countryData have to be set whenever
+        // the year changes, and every single value except for year has to be set whenever the country changes.
+
     }, {
         key: "cycleData",
-        value: function cycleData(countryData, countryName, year) {
+        value: function cycleData(countryData, year) {
+            var countryName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.state.country;
+
             this.setState({
                 countryData: countryData,
                 country: countryName,
                 population: getFromJSON("population", year, countryData),
                 employment: getFromJSON("employment", year, countryData, "", "%"),
                 spending: getFromJSON("spending", year, countryData, "$"),
-                alcohol: getFromJSON("alcohol", year, countryData, "", "litres"),
+                alcohol: getFromJSON("alcohol", year, countryData, "", " litres"),
                 internet: getFromJSON("internet", year, countryData),
                 year: year
             });
@@ -191,8 +221,19 @@ var InfoBox = function (_React$Component2) {
         value: function render() {
             var _this5 = this;
 
-            if (!this.state.country) {
-                //return '';
+            if (!this.state.country || this.state.failed) {
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(CountryList, {
+                        onChange: function onChange(val) {
+                            return _this5.handleChange(val);
+                        },
+                        onChangeYear: function onChangeYear(val) {
+                            return _this5.handleChangeYear(val);
+                        }
+                    })
+                );
             }
 
             return React.createElement(
@@ -251,6 +292,10 @@ var InfoBox = function (_React$Component2) {
 
     return InfoBox;
 }(React.Component);
+
+// pulls the relevant field out of any JSON object with a "data" field.
+// if the field returns undefined, this will return N/A instead. (error checking!)
+
 
 function getFromJSON(field, year, itemJSON) {
     var prefix = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "";
