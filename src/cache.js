@@ -22,13 +22,16 @@ class CountryList extends React.Component {
             console.log("Well, the checking part worked.")
             $.get(base_url, (response) => {
                 let responseJSON = JSON.parse(response);
-                const resultArray = $.map(responseJSON, function(value, index) { return [value]; });
-                resultArray.sort().reverse();
+                responseJSON.sort(function(a, b) {
+                    var x = a.name; var y = b.name;
+                    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+                });
                 localStorage.setItem('countries', JSON.stringify(responseJSON));
                 return responseJSON;
-            }).then((values) => {
+            }).done((values) => {
+                let storedValues = localStorage.getItem('countries');
                 this.setState({
-                    countries: values
+                    countries: storedValues
                 });
             });
         }
@@ -41,12 +44,14 @@ class CountryList extends React.Component {
 
     render() {
         const countries = this.state.countries;
+        console.log(countries);
         if (countries)
         {
             const countriesJSON = JSON.parse(countries);
             
             const listCountries = countriesJSON.map((country) => {
                 const name = country["name"]
+                console.log(name);
                 return (
                     <option key={name} value={name}>{name}</option>
                 );

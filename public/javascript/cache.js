@@ -38,15 +38,16 @@ var CountryList = function (_React$Component) {
                 console.log("Well, the checking part worked.");
                 $.get(base_url, function (response) {
                     var responseJSON = JSON.parse(response);
-                    var resultArray = $.map(responseJSON, function (value, index) {
-                        return [value];
+                    responseJSON.sort(function (a, b) {
+                        var x = a.name;var y = b.name;
+                        return x < y ? -1 : x > y ? 1 : 0;
                     });
-                    resultArray.sort().reverse();
                     localStorage.setItem('countries', JSON.stringify(responseJSON));
                     return responseJSON;
-                }).then(function (values) {
+                }).done(function (values) {
+                    var storedValues = localStorage.getItem('countries');
                     _this2.setState({
-                        countries: values
+                        countries: storedValues
                     });
                 });
             } else {
@@ -64,6 +65,7 @@ var CountryList = function (_React$Component) {
 
                 var listCountries = countriesJSON.map(function (country) {
                     var name = country["name"];
+                    console.log(name);
                     return React.createElement(
                         "option",
                         { key: name, value: name },
