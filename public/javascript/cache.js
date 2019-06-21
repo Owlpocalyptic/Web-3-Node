@@ -44,95 +44,101 @@ var CountryList = function (_React$Component) {
                     resultArray.sort().reverse();
                     localStorage.setItem('countries', JSON.stringify(responseJSON));
                     return responseJSON;
-                }).done(function (values) {
-                    _this2.state.countries = values;
+                }).then(function (values) {
+                    _this2.setState({
+                        countries: values
+                    });
                 });
             } else {
                 var _values = localStorage.getItem('countries');
                 this.state.countries = _values;
             }
-            this.state.countries = this.state.countries;
         }
     }, {
         key: "render",
         value: function render() {
             var countries = this.state.countries;
-            var countriesJSON = JSON.parse(countries);
+            console.log(countries);
+            if (countries) {
+                var countriesJSON = JSON.parse(countries);
 
-            var listCountries = countriesJSON.map(function (country) {
-                var name = country["name"];
+                var listCountries = countriesJSON.map(function (country) {
+                    var name = country["name"];
+                    return React.createElement(
+                        "option",
+                        { key: name, value: name },
+                        name
+                    );
+                });
+
+                var yearArray = [];
+                for (var y = 1998; y <= 2008; y++) {
+                    yearArray.push(y);
+                }
+
+                var listYears = yearArray.map(function (year) {
+                    return React.createElement(
+                        "option",
+                        { key: year, value: year },
+                        year
+                    );
+                });
+
                 return React.createElement(
-                    "option",
-                    { key: name, value: name },
-                    name
-                );
-            });
-
-            var yearArray = [];
-            for (var y = 1998; y <= 2008; y++) {
-                yearArray.push(y);
-            }
-
-            var listYears = yearArray.map(function (year) {
-                return React.createElement(
-                    "option",
-                    { key: year, value: year },
-                    year
-                );
-            });
-
-            return React.createElement(
-                "table",
-                null,
-                React.createElement(
-                    "tbody",
+                    "table",
                     null,
                     React.createElement(
-                        "tr",
+                        "tbody",
                         null,
                         React.createElement(
-                            "td",
+                            "tr",
                             null,
                             React.createElement(
-                                "label",
-                                { htmlFor: "country-select" },
-                                "Country"
+                                "td",
+                                null,
+                                React.createElement(
+                                    "label",
+                                    { htmlFor: "country-select" },
+                                    "Country"
+                                )
+                            ),
+                            React.createElement(
+                                "td",
+                                null,
+                                React.createElement(
+                                    "select",
+                                    { id: "country-select", ref: this.countrySelect, name: "countries", onChange: this.props.onChange },
+                                    listCountries
+                                )
                             )
                         ),
                         React.createElement(
-                            "td",
+                            "tr",
                             null,
                             React.createElement(
-                                "select",
-                                { id: "country-select", ref: this.countrySelect, name: "countries", onChange: this.props.onChange },
-                                listCountries
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        "tr",
-                        null,
-                        React.createElement(
-                            "td",
-                            null,
+                                "td",
+                                null,
+                                React.createElement(
+                                    "label",
+                                    { htmlFor: "year-select" },
+                                    "Year"
+                                )
+                            ),
                             React.createElement(
-                                "label",
-                                { htmlFor: "year-select" },
-                                "Year"
-                            )
-                        ),
-                        React.createElement(
-                            "td",
-                            null,
-                            React.createElement(
-                                "select",
-                                { id: "year-select", ref: this.yearSelect, name: "years", onChange: this.props.onChangeYear },
-                                listYears
+                                "td",
+                                null,
+                                React.createElement(
+                                    "select",
+                                    { id: "year-select", ref: this.yearSelect, name: "years", onChange: this.props.onChangeYear },
+                                    listYears
+                                )
                             )
                         )
                     )
-                )
-            );
+                );
+            } else {
+                return '';
+            }
         }
     }]);
 

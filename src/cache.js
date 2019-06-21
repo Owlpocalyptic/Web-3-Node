@@ -26,8 +26,10 @@ class CountryList extends React.Component {
                 resultArray.sort().reverse();
                 localStorage.setItem('countries', JSON.stringify(responseJSON));
                 return responseJSON;
-            }).done((values) => {
-                this.state.countries = values;
+            }).then((values) => {
+                this.setState({
+                    countries: values
+                });
             });
         }
         else
@@ -35,54 +37,60 @@ class CountryList extends React.Component {
             let values = localStorage.getItem('countries');
             this.state.countries = values;
         }
-        this.state.countries = this.state.countries
     }
 
     render() {
         const countries = this.state.countries;
-        const countriesJSON = JSON.parse(countries);
-        
-        const listCountries = countriesJSON.map((country) => {
-            const name = country["name"]
-            return (
-                <option key={name} value={name}>{name}</option>
-            );
-        });
-
-        const yearArray = []
-        for (let y = 1998; y <= 2008; y++)
+        if (countries)
         {
-            yearArray.push(y);
-        }
+            const countriesJSON = JSON.parse(countries);
+            
+            const listCountries = countriesJSON.map((country) => {
+                const name = country["name"]
+                return (
+                    <option key={name} value={name}>{name}</option>
+                );
+            });
 
-        const listYears = yearArray.map((year) => {
+            const yearArray = []
+            for (let y = 1998; y <= 2008; y++)
+            {
+                yearArray.push(y);
+            }
+
+            const listYears = yearArray.map((year) => {
+                return (
+                    <option key={year} value={year}>{year}</option>
+                )
+            });
+
             return (
-                <option key={year} value={year}>{year}</option>
-            )
-        });
-
-        return (
-            <table>
-                <tbody>
-                <tr>
-                    <td>
-                        <label htmlFor="country-select">Country</label>
-                    </td>
-                    <td>
-                        <select id="country-select" ref={this.countrySelect} name="countries" onChange={this.props.onChange}>{listCountries}</select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label htmlFor="year-select">Year</label>
-                    </td>
-                    <td>
-                        <select id="year-select" ref={this.yearSelect} name="years" onChange={this.props.onChangeYear}>{listYears}</select>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        );
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <label htmlFor="country-select">Country</label>
+                        </td>
+                        <td>
+                            <select id="country-select" ref={this.countrySelect} name="countries" onChange={this.props.onChange}>{listCountries}</select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label htmlFor="year-select">Year</label>
+                        </td>
+                        <td>
+                            <select id="year-select" ref={this.yearSelect} name="years" onChange={this.props.onChangeYear}>{listYears}</select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            );
+        }
+        else
+        {
+            return '';
+        }
     }
 }
 
