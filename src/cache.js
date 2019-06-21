@@ -1,7 +1,5 @@
 'use strict';
 
-import { react } from "babel-types";
-
 let values;
 const base_url = "http://10.25.137.137:80/api/countries";
 console.log("Cache.js is running");
@@ -10,24 +8,42 @@ console.log("Cache.js is running");
 class CountryList extends React.Component {
     constructor(props) {
         super(props);
+        this.countrySelect = React.createRef();
+        this.yearSelect = React.createRef();
         this.state = {
             countries: null
         }
+        this.addCountries();
     }
 
-    addCountries(i) {
-        this.state.countries = JSON.parse(i);
-        countries.sort(function(a, b) {
-            var x = a.name; var y = b.name;
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-
+    addCountries() {
+        if (localStorage.getItem('countries') === null)
+        {
+            console.log("Well, the checking part worked.")
+            $.get(base_url, (response) => {
+                let responseJSON = JSON.parse(response);
+                localStorage.setItem('countries', JSON.stringify(responseJSON));
+                return responseJSON;
+            }).then((values) => {
+                this.state.countries = values;
+            });
+        }
+        else
+        {
+            let values = localStorage.getItem('countries');
+            this.state.countries = values;
+        }
+        this.state.countries = this.state.countries
     }
 
     render() {
-        const listCountries = countries.map((country) => {
+        const countries = this.state.countries;
+        const countriesJSON = JSON.parse(countries);
+        
+        const listCountries = countriesJSON.map((country) => {
+            const name = country["name"]
             return (
-                <option value={country}>{country}</option>
+                <option value={name}>{name}</option>
             );
         });
 
@@ -35,151 +51,111 @@ class CountryList extends React.Component {
             let listString = "";
             for (let y = 1998; y <= 2008; y++)
             {
-                listString += "<option value='" + y + "'>" + y + "</option>";
+                listString += "<option key= '" + y + "' value='" + y + "'>" + y + "</option>";
             }
             return listString;
         }
 
         return (
             <table>
+                <tbody>
                 <tr>
                     <td>
-                        <label for="country-select">Country</label>
+                        <label htmlFor="country-select">Country</label>
                     </td>
                     <td>
-                        <select id="country-select" name="countries">{listCountries}</select>
+                        <select id="country-select" ref={this.countrySelect} name="countries" onChange={this.props.onChange}>{listCountries}</select>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <label for="year-select">Year</label>
+                        <label htmlFor="year-select">Year</label>
                     </td>
                     <td>
-                        <select id="year-select" name="years">{listYears}</select>
+                        <select id="year-select" ref={this.yearSelect} name="years" onChange={this.props.onChangeYear}>{listYears()}</select>
                     </td>
                 </tr>
+                </tbody>
             </table>
         );
     }
 }
 
-ReactDOM.render(
-    <CountryList />,
-    document.getElementById('root')
-  );
-
-
 class InfoBox extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { country: null };
+        this.state = { 
+            country: null,
+            population: null,
+            employment: null,
+            spending: null,
+            alcohol: null,
+            internet: null,
+            year: "1998"
+        };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeYear = this.handleChangeYear.bind(this);
+        this.cycleData = this.cycleData.bind(this);
+    }
+
+    handleChange(val) {
+        const countryName = val.target.value;
+        const year = this.state.year;
+        $.get(base_url + "/" + countryName, (response) => {
+            return JSON.parse(response);
+        }).then((updatedJSON) => {
+            const countryData = JSON.parse(updatedJSON);
+            this.cycleData(countryData, countryName, year);
+        });
+    }
+
+    handleChangeYear(val) {
+        this.cycleData(this.state.countryData, this.state.countryName, val.target.value);
+    }
+
+    cycleData(countryData, countryName, year) {
+        this.setState({
+            countryData : countryData,
+            country: countryName,
+            population: getFromJSON("population", year, countryData),
+            employment: getFromJSON("employment", year, countryData, "", "%"),
+            spending: getFromJSON("spending", year, countryData, "$"),
+            alcohol: getFromJSON("alcohol", year, countryData, "", "litres"),
+            internet: getFromJSON("internet", year, countryData),
+            year: year
+        });
     }
 
     render() {
         if (!this.state.country)
         {
-            return '';
+            //return '';
         }
 
-        return 
+        return (
+            <div>
+                <CountryList 
+                    onChange={(val) => this.handleChange(val)}
+                    onChangeYear={(val) => this.handleChangeYear(val)}
+                />
+                <div id="title">
+                    <h2>{this.state.country}</h2>
+                    <div id="population">Population: {this.state.population}</div>
+                    <div id="employment">Employment Rate: {this.state.employment}</div>
+                    <div id="spending">Government Health Spending Per Capita: {this.state.spending}</div>
+                    <div id="alcohol">Alcohol Consumption Per Adult: {this.state.alcohol}</div>
+                    <div id="internet">Population With Internet Access: {this.state.internet}</div>
+                </div>
+            </div>
+        );
     }
 }
 
 
-
-
-// ==============================
-
-const loadList = (items) => {
-    itemsJSON = JSON.parse(items);
-    itemsJSON.sort(function(a, b) {
-        var x = a.name; var y = b.name;
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
-    console.log(typeof itemsJSON);
-    let selectbox = $("#country-select");
-    for (let i=0;i< itemsJSON.length;i++)
-    {
-        let country = itemsJSON[i]["name"];
-        selectbox.append("<option value='" + i + "'>" + country + "</option>");
-    }
-    selectbox.change(() => {
-        changeInfoBox();
-    });
-}
-
-
-if (localStorage.getItem('countries') === null)
-{
-    console.log("Well, the checking part worked.")
-    $.get(base_url, (response) => {
-        responseJSON = JSON.parse(response);
-        localStorage.setItem('countries', JSON.stringify(responseJSON));
-        return responseJSON;
-    }).then((values) => {
-        loadList(values);
-    });
-}
-else
-{
-    values = localStorage.getItem('countries');
-    valuesString = JSON.stringify(values);
-    loadList(JSON.parse(valuesString));
-}
-
-const yearbox = $("#year-select");
-for (let y = 1998; y <= 2008; y++)
-{
-    yearbox.append("<option value='" + y + "'>" + y + "</option>");
-}
-yearbox.change(() => {
-    changeInfoBox();
-});
-
-function changeInfoBox() {
-    const itemJSONname = itemsJSON[$("#country-select").children("option:selected").val()]["name"];
-    const infobox = $("#infobox");
-    if (itemJSONname != "")
-    {
-        infobox.removeClass("hidden");
-        $.get(base_url + "/" + itemJSONname, (response) => {
-            responseJSON = JSON.parse(response);
-            return responseJSON;
-        }).then((updatedJSON) => {
-            let itemJSON = JSON.parse(updatedJSON);
-        
-            const year = $("#year-select").children("option:selected").val();
-            let infotitle = $("#title");
-            let titletext = itemJSON["name"] + ", " + year;
-            infotitle.text(titletext);
-
-            let infoPopulation=$("#population");
-            let infoEmployment=$("#employment-rate");
-            let infoSpending=$("#spending");
-            let infoAlcohol=$("#alcohol-consumption");
-            let infoInternet=$("#internet-access");
-
-            infoPopulation.text(getFromJSON("population", year, itemJSON));
-            let suffix = (getFromJSON("employment", year, itemJSON) === "N/A") ? "" : "%";
-            infoEmployment.text(getFromJSON("employment", year, itemJSON, "Rate", "", suffix));
-            let prefix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : "$";
-            infoSpending.text("Government Health " + getFromJSON("spending", year, itemJSON, "Per Capita", prefix));
-            suffix = (getFromJSON("spending", year, itemJSON) === "N/A") ? "" : " litres";
-            infoAlcohol.text(getFromJSON("alcohol", year, itemJSON, "Consumption Per Adult", "", suffix));
-            infoInternet.text("Population With " + getFromJSON("internet", year, itemJSON, "Access"));
-        });
-    }
-    else
-    {
-        infobox.addClass("hidden");
-    }
-};
-
-function getFromJSON(field, year, itemJSON, extra = "", prefix = "", suffix = "") {
+function getFromJSON(field, year, itemJSON, prefix = "", suffix = "") {
     const rawData = (itemJSON["data"][field] !== undefined) ? itemJSON["data"][field][year] : undefined;
     const numString = (rawData !== undefined && rawData != 0) ? prefix + formatNumbers(rawData) + suffix : "N/A";
-    extra = (extra != "") ? " " + extra : "";
-    return capitalize(field) + extra + ": " + numString;
+    return numString;
 };
 
 const formatNumbers = (amount, decimalCount = 0, decimal = ".", thousands = ",") => {
@@ -198,10 +174,12 @@ const formatNumbers = (amount, decimalCount = 0, decimal = ".", thousands = ",")
     }
 };
 
-function capitalize(s) {
-    if (typeof s !== 'string') return '';
-    n = s.replace("_", " ");
-    n = n.replace("id", "ID");
-    n = n.charAt(0).toUpperCase() + n.slice(1);
-    return n;
-};
+ReactDOM.render(
+    <InfoBox />,
+    document.getElementById('info')
+  );
+
+
+
+
+// ==============================
