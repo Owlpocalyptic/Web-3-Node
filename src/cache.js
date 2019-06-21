@@ -183,6 +183,8 @@ function getFromJSON(field, year, itemJSON, prefix = "", suffix = "") {
     return numString;
 };
 
+// formats numbers so that they're legible and users don't have to count digits to get a sense of
+// what each country's population is.
 const formatNumbers = (amount, decimalCount = 0, decimal = ".", thousands = ",") => {
     try {
         decimalCount = Math.abs(decimalCount);

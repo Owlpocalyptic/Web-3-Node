@@ -306,6 +306,8 @@ function getFromJSON(field, year, itemJSON) {
     return numString;
 };
 
+// formats numbers so that they're legible and users don't have to count digits to get a sense of
+// what each country's population is.
 var formatNumbers = function formatNumbers(amount) {
     var decimalCount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var decimal = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ".";
